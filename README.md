@@ -17,7 +17,7 @@ You can install the released version of pl462 from
 
 ``` r
 library(devtools)
-devtools::install_github("A-Farina/pl462")
+devtools::install_github("A-Farina/pl462", ref = "main")
 ```
 
 ## stalker dataset
