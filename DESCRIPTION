@@ -1,12 +1,12 @@
 Package: pl462
-Title: What the Package Does (One Line, Title Case)
+Title: Data package for PL462
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Andrew",
            family = "Farina",
            role = c("aut", "cre"),
            email = "andrew.farina@tufts.edu")
-Description: What the package does (one paragraph).
+Description: This package will simplify the student and teacher workflow for PL462.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Language: en
