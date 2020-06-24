@@ -3,8 +3,7 @@ title: "Lesson18-Lab_Questions"
 author: "Your Name"
 date: "The Date"
 output: 
-  html_document:
-    toc:true
+  word_document
 ---
 
 ```{r setup, include=FALSE}
@@ -13,10 +12,8 @@ knitr::opts_chunk$set(echo = FALSE,
                       message = FALSE, 
                       warning = FALSE)
 
-library(tidyverse) # For data manipulation
-library(ggpubr) # For result output
-library(rstatix) # Tidy friendly simple models
-
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(tidyverse, ggpubr, rstatix)
 ```
 
 ```{r data}
@@ -42,7 +39,6 @@ dat %>% ggplot(aes(x = Stalker, fill = AmtTher)) +
        subtitle = "According to Therapy Amount and Type", 
        fill = "Therapy Amount")
 ```
-
 
 ```{r summary}
 # Summary Statistics
@@ -133,9 +129,7 @@ dat %>% group_by(AmtTher) %>%
   anova_test(Stalker ~ Therapy, error = model)
 ```
 
-# Lab Questions:
-
-## Comment on the normality of the data:
+# Comment on the normality of the data:
 
 ### A. Distribution
 
@@ -147,7 +141,7 @@ dat %>% group_by(AmtTher) %>%
 
 ### C.	Outliers
 
-## ANOVA Questions:
+# ANOVA Questions:
 
 ### 1. What are the independent variables and how many levels do they have?
 
