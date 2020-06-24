@@ -1,0 +1,174 @@
+---
+title: "Lesson18-Lab_Questions"
+author: "Your Name"
+date: "The Date"
+output: 
+  html_document:
+    toc:true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, 
+                      include = FALSE, 
+                      message = FALSE, 
+                      warning = FALSE)
+
+library(tidyverse) # For data manipulation
+library(ggpubr) # For result output
+library(rstatix) # Tidy friendly simple models
+
+```
+
+```{r data}
+# Loading the Data
+data(stalker, package = "pl462")
+dat <- stalker
+glimpse(dat)
+```
+
+```{r explore}
+# Categorical Counts
+dat %>% 
+  group_by(Therapy, AmtTher) %>% 
+  select(-Stalker) %>% 
+  table()
+```
+
+```{r continuous}
+# Continuous Density Plot
+dat %>% ggplot(aes(x = Stalker, fill = AmtTher)) + 
+  geom_density() + facet_grid(Therapy ~ .) +
+  labs(title = "Stalking Hour Distributions",
+       subtitle = "According to Therapy Amount and Type", 
+       fill = "Therapy Amount")
+```
+
+
+```{r summary}
+# Summary Statistics
+dat %>% 
+  group_by(Therapy, AmtTher) %>% 
+  get_summary_stats(Stalker, type = "mean_sd")
+```
+
+```{r boxplot}
+# Visualize the Data
+ggboxplot(dat, x = "AmtTher", y = "Stalker",
+          color = "Therapy")
+```
+
+```{r outliers}
+# Assumption testing- Outliers
+dat %>% 
+  group_by(Therapy, AmtTher) %>% 
+  identify_outliers(Stalker)
+```
+
+```{r residuals}
+# Assumption testing- Normality of Residuals- QQ Plot
+model <- lm(Stalker ~ Therapy * AmtTher, data = dat)
+ggqqplot(residuals(model))
+```
+
+```{r residuals2}
+# Assumption testing- Normality of Residuals- Shapiro-Wilks Test
+shapiro_test(residuals(model))
+```
+
+```{r normality}
+# Assumption testing- Normality by Group- Shapiro-Wilks Test
+dat %>% group_by(AmtTher) %>% 
+  shapiro_test(Stalker)
+```
+
+```{r qq1}
+# Assumption testing- Normality by Group- QQ Plot
+ggqqplot(dat, "Stalker", 
+         ggtheme = theme_bw()) + 
+  facet_grid(Therapy~AmtTher)
+```
+
+```{r}
+# Assumption testing- Homogeneity of Variance
+dat %>% levene_test(Stalker ~ Therapy * AmtTher)
+```
+
+```{r anova1}
+# Two-way ANOVA- Tests of Between-Subject Effects
+(stalker_aov <- dat %>% 
+  anova_test(Stalker ~ Therapy * AmtTher))
+```
+
+```{r multi-comparisons}
+# Two-way ANOVA- Multiple Comparisons- Therapy Type
+dat %>% pairwise_t_test(Stalker ~ Therapy, 
+                        p.adjust.method = 'bonferroni') %>% 
+  select(-`.y.`, -n1, -n2) 
+```
+
+```{r}
+# Two-way ANOVA- Multiple Comparisons- Therapy Amount
+dat %>% pairwise_t_test(Stalker ~ AmtTher, 
+                        p.adjust.method = 'bonferroni') %>% 
+  select(-`.y.`, -n1, -n2) 
+```
+
+```{r means1}
+# Two-way ANOVA- Visualize the Data
+stalker %>% group_by(Therapy, AmtTher) %>% 
+  summarize(mean = mean(Stalker)) %>% 
+  ggplot(aes(x = AmtTher, y = mean, group = Therapy)) + 
+  geom_line(aes(color = Therapy)) + 
+  geom_point(aes(color = Therapy)) + 
+  labs(title = "Estimated Marginal Means of Time Spent Stalking (hours per week)",
+       x = "Amount of Therapy",
+       y = "Estimated Marginal Means")
+```
+
+```{r}
+# Simple Main Effects
+model <- lm(Stalker ~ Therapy * AmtTher, data = dat)
+
+dat %>% group_by(AmtTher) %>% 
+  anova_test(Stalker ~ Therapy, error = model)
+```
+
+# Lab Questions:
+
+## Comment on the normality of the data:
+
+### A. Distribution
+
+
+
+### B.	Variance
+
+
+
+### C.	Outliers
+
+## ANOVA Questions:
+
+### 1. What are the independent variables and how many levels do they have?
+
+
+
+### 2. What is the dependent variable?
+
+
+
+### 3. Describe the assumption of homogeneity of variance. Has the assumption been met? (Quote relevant statistics in APA format).
+
+
+
+### 4. Report the main effect of Type of Therapy in APA format. Is this effect significant and how would you interpret it?
+
+
+
+### 5. Report the main effect of Time in Therapy in APA format. Is this effect significant and how would you interpret it?
+
+
+
+### 6. Report the interaction effect between Therapy and AmtTher in APA format. Is this effect significant and how would you interpret it?
+
+
