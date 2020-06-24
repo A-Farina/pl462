@@ -16,6 +16,10 @@ knitr::opts_chunk$set(
 # pl462 <img src='man/figures/logo.jpeg' align="right" height="137.5" />
 
 <!-- badges: start -->
+```{r echo= FALSE, message = FALSE, warning = FALSE}
+usethis::use_lifecycle_badge("Experimental")
+```
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 <!-- badges: end -->
 
 The goal of pl462 is to create a data package to simplify student and teacher workflows for PL462. 
@@ -25,8 +29,8 @@ The goal of pl462 is to create a data package to simplify student and teacher wo
 You can install the released version of pl462 from [GitHub](https://github.com/A-Farina/pl462) with:
 
 ``` r
-library(devtools)
-devtools::install_github("A-Farina/pl462", ref = "main")
+library(remotes)
+remotes::install_github("A-Farina/pl462", ref = "main")
 ```
 
 ## stalker dataset

@@ -14,10 +14,12 @@ knitr::opts_chunk$set(echo = FALSE,
 
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load(tidyverse, ggpubr, rstatix)
+remotes::install_github("A-Farina/pl462", ref = "main")
 ```
 
 ```{r data}
 # Loading the Data
+
 data(stalker, package = "pl462")
 dat <- stalker
 glimpse(dat)
