@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 <!-- badges: end -->
 
 The goal of pl462 is to create a data package to simplify student and
@@ -16,6 +18,7 @@ You can install the released version of pl462 from
 [GitHub](https://github.com/A-Farina/pl462) with:
 
 ``` r
+library(remotes)
 remotes::install_github("A-Farina/pl462", ref = "main")
 ```
 
