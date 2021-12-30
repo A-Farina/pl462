@@ -31,7 +31,7 @@ You can install the released version of pl462 from [GitHub](https://github.com/A
 
 ``` r
 library(devtools)
-devtools::install_github("A-Farina/pl462", ref = "main")
+devtools::install_github("A-Farina/pl462")
 ```
 
 # Datasets:

@@ -7,6 +7,8 @@
 
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
 The goal of pl462 is to create a data package to simplify student and
@@ -19,7 +21,7 @@ You can install the released version of pl462 from
 
 ``` r
 library(devtools)
-devtools::install_github("A-Farina/pl462", ref = "main")
+devtools::install_github("A-Farina/pl462")
 ```
 
 # Datasets:
