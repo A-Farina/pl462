@@ -22,6 +22,8 @@ library(devtools)
 devtools::install_github("A-Farina/pl462", ref = "main")
 ```
 
+# Datasets:
+
 ## stalker dataset
 
 This dataset contains 78 observations and 3 variables (Therapy, AmtTher,
@@ -29,10 +31,54 @@ Stalker).
 
 **Categorical Variables**
 
-  - Therapy: Therapy Type (Cruel to be Kind Therapy, Psychodyshamic
+-   Therapy: Therapy Type (Cruel to be Kind Therapy, Psychodyshamic
     Therapy, None)
-  - AmtTher: Amount of Therapy (6 Weeks, 12 Weeks)
+-   AmtTher: Amount of Therapy (6 Weeks, 12 Weeks)
 
 **Continuous Variables**
 
-  - Stalker: Time Spent Stalking (Hours per Week)
+-   Stalker: Time Spent Stalking (Hours per Week)
+
+## fugazi dataset
+
+This dataset contains 90 observations and 3 variables (music, age,
+liking).
+
+**Categorical Variables**
+
+-   music: Type of Music (Fugazi, Abba, Mantilow)
+-   age: Age of Listener (0-40 Years, 40+ Years)
+
+**Continuous Variables**
+
+-   liking: Liking Rating
+
+## happyparent dataset
+
+This dataset contains 302 observations and 7 variables (sex, health,
+educ, str_slf1, negmood1, children, str_chd).
+
+**Categorical Variables**
+
+-   sex: Sex of Parent (male, female)
+-   educ: Education of Parent (Ranging from 8th Grade to PhD)
+
+**Continuous Variables**
+
+-   health: Self-reported Physical Health
+-   str_slf1: Self-reported Stress Rating of Parent
+-   negmood1: Negative Mood Rating of Parent
+-   children: Total Number of Children
+-   str_chd: Self-reported Stress Rating of Child
+
+## supermodel dataset
+
+This dataset contains 231 observations and 4 variables (salary, age,
+years, beauty).
+
+**Continuous Variables**
+
+-   salary: Salary per Day in British Pounds (0A3)
+-   age: Age in Years of Supermodel
+-   years: Number of Years as a Model
+-   beauty: Attractiveness (%)

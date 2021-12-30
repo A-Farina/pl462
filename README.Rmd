@@ -20,6 +20,7 @@ knitr::opts_chunk$set(
 usethis::use_lifecycle_badge("Experimental")
 ```
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
 The goal of pl462 is to create a data package to simplify student and teacher workflows for PL462. 
@@ -29,9 +30,11 @@ The goal of pl462 is to create a data package to simplify student and teacher wo
 You can install the released version of pl462 from [GitHub](https://github.com/A-Farina/pl462) with:
 
 ``` r
-library(remotes)
-remotes::install_github("A-Farina/pl462", ref = "main")
+library(devtools)
+devtools::install_github("A-Farina/pl462", ref = "main")
 ```
+
+# Datasets:
 
 ## stalker dataset
 
@@ -49,3 +52,56 @@ This dataset contains `r nrow(stalker)` observations and `r ncol(stalker)` varia
 **Continuous Variables**
 
   *   Stalker: Time Spent Stalking (Hours per Week)
+
+## fugazi dataset
+
+```{r include = FALSE}
+load(here::here("data", "fugazi.rda"))
+```
+
+This dataset contains `r nrow(fugazi)` observations and `r ncol(fugazi)` variables (`r names(fugazi)`).
+
+**Categorical Variables**
+
+  *   music: Type of Music (Fugazi, Abba, Mantilow)
+  *   age: Age of Listener (0-40 Years, 40+ Years)
+
+**Continuous Variables**
+
+  *   liking: Liking Rating
+  
+## happyparent dataset
+
+```{r include = FALSE}
+load(here::here("data", "happyparent.rda"))
+```
+
+This dataset contains `r nrow(happyparent)` observations and `r ncol(happyparent)` variables (`r names(happyparent)`).
+
+**Categorical Variables**
+
+  *   sex: Sex of Parent (male, female)
+  *   educ: Education of Parent (Ranging from 8th Grade to PhD)
+
+**Continuous Variables**
+
+  *   health: Self-reported Physical Health
+  *   str_slf1: Self-reported Stress Rating of Parent
+  *   negmood1: Negative Mood Rating of Parent
+  *   children: Total Number of Children
+  *   str_chd: Self-reported Stress Rating of Child
+  
+## supermodel dataset
+
+```{r include = FALSE}
+load(here::here("data", "supermodel.rda"))
+```
+
+This dataset contains `r nrow(supermodel)` observations and `r ncol(supermodel)` variables (`r names(supermodel)`).
+
+**Continuous Variables**
+
+  *   salary: Salary per Day in British Pounds (\u00A3)
+  *   age: Age in Years of Supermodel
+  *   years: Number of Years as a Model
+  *   beauty: Attractiveness (%)
