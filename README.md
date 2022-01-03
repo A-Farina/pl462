@@ -68,10 +68,10 @@ educ, str_slf1, negmood1, children, str_chd).
 **Continuous Variables**
 
 -   health: Self-reported Physical Health
--   str_slf1: Self-reported Stress Rating of Parent
+-   str_slf1: Amount of Stress Related to Self
 -   negmood1: Negative Mood Rating of Parent
 -   children: Total Number of Children
--   str_chd: Self-reported Stress Rating of Child
+-   str_chd: Amount of Stress Related to Children
 
 ## supermodel dataset
 
