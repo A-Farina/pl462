@@ -13,13 +13,12 @@ knitr::opts_chunk$set(echo = FALSE,
                       warning = FALSE)
 
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load(tidyverse, ggpubr, rstatix)
+pacman::p_load(tidyverse, ggpubr, rstatix, pl462)
 ```
 
 ```{r data}
 # Loading the Data
-data(stalker, package = "pl462")
-dat <- stalker
+dat <- pl462::stalker
 glimpse(dat)
 ```
 
@@ -33,8 +32,10 @@ dat %>%
 
 ```{r continuous}
 # Continuous Density Plot
-dat %>% ggplot(aes(x = Stalker, fill = AmtTher)) + 
-  geom_density() + facet_grid(Therapy ~ .) +
+dat %>% ggplot() + 
+  aes(x = Stalker, fill = AmtTher) + 
+  geom_density() + 
+  facet_grid(Therapy ~ .) +
   labs(title = "Stalking Hour Distributions",
        subtitle = "According to Therapy Amount and Type", 
        fill = "Therapy Amount")
@@ -44,20 +45,29 @@ dat %>% ggplot(aes(x = Stalker, fill = AmtTher)) +
 # Summary Statistics
 dat %>% 
   group_by(Therapy, AmtTher) %>% 
-  get_summary_stats(Stalker, type = "mean_sd")
+  summarize(n = n(),
+            mean = mean(Stalker),
+            sd = sd(Stalker))
 ```
 
 ```{r boxplot}
 # Visualize the Data
-ggboxplot(dat, x = "AmtTher", y = "Stalker",
-          color = "Therapy")
+dat %>% 
+  ggplot() + 
+  aes(x = AmtTher, y = Stalker, color = Therapy) +
+  geom_boxplot() +
+  labs(title = "Stalking Hour Distributions",
+       subtitle = "According to Therapy Amount and Type", 
+       color = "Therapy",
+       x = "Amount of Therapy",
+       y = "Stalker Hour")
 ```
 
 ```{r outliers}
 # Assumption testing- Outliers
 dat %>% 
   group_by(Therapy, AmtTher) %>% 
-  identify_outliers(Stalker)
+  rstatix::identify_outliers(Stalker)
 ```
 
 ```{r residuals}
@@ -98,7 +108,17 @@ dat %>% levene_test(Stalker ~ Therapy * AmtTher)
 ```{r multi-comparisons}
 # Two-way ANOVA- Multiple Comparisons- Therapy Type
 dat %>% pairwise_t_test(Stalker ~ Therapy, 
+                        paired = TRUE,
                         p.adjust.method = 'bonferroni') %>% 
+  select(-`.y.`, -n1, -n2) 
+```
+
+```{r multi-comparisons}
+# Two-way ANOVA- Multiple Comparisons- Therapy Type
+dat %>% t_test(Stalker ~ Therapy,
+               paired = TRUE,
+               var.equal = TRUE,
+               p.adjust.method = 'bonferroni') %>% 
   select(-`.y.`, -n1, -n2) 
 ```
 
@@ -111,12 +131,14 @@ dat %>% pairwise_t_test(Stalker ~ AmtTher,
 
 ```{r means1}
 # Two-way ANOVA- Visualize the Data
-stalker %>% group_by(Therapy, AmtTher) %>% 
+dat %>% group_by(Therapy, AmtTher) %>% 
   summarize(mean = mean(Stalker)) %>% 
-  ggplot(aes(x = AmtTher, y = mean, group = Therapy)) + 
+  ggplot() + 
+  aes(x = AmtTher, y = mean, group = Therapy) + 
   geom_line(aes(color = Therapy)) + 
   geom_point(aes(color = Therapy)) + 
-  labs(title = "Estimated Marginal Means of Time Spent Stalking (hours per week)",
+  labs(title = "Estimated Marginal Means of Time Spent Stalking",
+       subtitle = "(hours per week)",
        x = "Amount of Therapy",
        y = "Estimated Marginal Means")
 ```
