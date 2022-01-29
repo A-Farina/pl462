@@ -84,3 +84,42 @@ years, beauty).
 -   age: Age in Years of Supermodel
 -   years: Number of Years as a Model
 -   beauty: Attractiveness (%)
+
+## cholesterol dataset
+
+This dataset contains 18 observations and 5 variables (id, before,
+after4weeks, after8weeks, margarine). These data were contributed by
+Ellen Marshall, University of Sheffield as part of the [Statstutor
+community project.](www.statstutor.ac.uk).
+
+**Categorical Variables**
+
+-   margarine: Type of Margarine Consumed (A, B)
+
+**Continuous Variables**
+
+-   id: Participant ID
+-   before: Cholesterol before the intervention (mmol/L)
+-   after4weeks: Cholesterol after four weeks (mmol/L)
+-   after8weeks: Cholesterol after eight weeks (mmol/L)
+
+## diet dataset
+
+This dataset contains 78 observations and 8 variables (person, sex, age,
+height, preweight, diet_type, weight10weeks, weight_lost). These data
+were contributed by Ellen Marshall, University of Sheffield as part of
+the [Statstutor community project.](www.statstutor.ac.uk).
+
+**Categorical Variables**
+
+-   sex: Biological Sex of Participant (Male, Female)
+-   diet_type: Type of Diet Consumed (1, 2, 3)
+
+**Continuous Variables**
+
+-   person: Participant ID
+-   age: Age of Participant (Years)
+-   height: Height of Participant (cm)
+-   preweight: Weight of Participant before intervention (kg)
+-   weight10weeks: Weight of Participant after 10 weeks (kg)
+-   weight_loss: Weight change of Participant (kg)

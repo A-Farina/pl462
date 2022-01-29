@@ -29,3 +29,22 @@ supermodel <- read_sav(here::here("data-raw", "Supermodel.sav")) %>%
   janitor::clean_names()
 
 usethis::use_data(supermodel, overwrite = TRUE)
+
+#####################################################################
+
+cholesterol <- read_sav(here::here("data-raw", "Cholesterol_SPSS.sav")) %>%
+  janitor::clean_names() %>%
+  mutate(margarine = as_factor(margarine))
+
+usethis::use_data(cholesterol, overwrite = TRUE)
+
+#####################################################################
+
+diet <- read_sav(here::here("data-raw", "Diet_SPSS.sav")) %>%
+  rename(diet_type = Diet) %>%
+  mutate(gender = as_factor(gender, levels = "labels"),
+         diet_type = as_factor(diet_type)) %>%
+  janitor::clean_names() %>%
+  rename(sex = gender)
+
+usethis::use_data(diet, overwrite = TRUE)
