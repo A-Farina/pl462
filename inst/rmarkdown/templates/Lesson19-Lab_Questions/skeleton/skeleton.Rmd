@@ -113,7 +113,7 @@ dat %>% pairwise_t_test(Stalker ~ Therapy,
   select(-`.y.`, -n1, -n2) 
 ```
 
-```{r multi-comparisons}
+```{r}
 # Two-way ANOVA- Multiple Comparisons- Therapy Type
 dat %>% t_test(Stalker ~ Therapy,
                paired = TRUE,
