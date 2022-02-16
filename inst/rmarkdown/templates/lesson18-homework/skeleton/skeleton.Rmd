@@ -190,7 +190,8 @@ Now that we understand the one way ANOVA for each level of music, we can conduct
 # One-way ANOVA- Multiple Comparisons- Therapy Type
 df %>% 
   group_by(age) %>% 
-  emmeans_test(liking ~ music) 
+  pairwise_t_test(liking ~ music, 
+                  paired = FALSE) 
 ```
 
 ### 9. Report the main effect of music type in APA format. Is this effect significant and how would you interpret it?

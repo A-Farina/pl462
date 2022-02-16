@@ -166,13 +166,14 @@ If a significant two-way interaction exists, then the effect that one IV has on 
 
 For a non-significant two-way interaction you can determine if there is a significant main effect from the ANOVA table and follow it up with a pairwise comparison between groups to determine where the differences exist. Spoiler Alert--we do not have a significant two-way interaction but we do have significant main effects. As a result, we will use a pairwise t-test to determine where differences exist.
 
-ANOVA tests determine whether there **is** a difference among groups. Multiple Comparisons Tables are used to understand **where** the differences exist. We will interpret the adjusted p-value (p.adj). This adjusted value uses a Bonferroni correction to account for multiple tests (adjusts the $\alpha).$
+ANOVA tests determine whether there **is** a difference among groups. Multiple Comparisons Tables are used to understand **where** the differences exist. We will interpret the adjusted p-value (p.adj). This adjusted value uses a Holm correction to account for multiple tests (adjusts the $\alpha).$
 ```
 
 ```{r compare-type-equal-var}
 # Two-way ANOVA- Multiple Comparisons- Therapy Type
-dat %>% emmeans_test(Stalker ~ Therapy, model = model) 
-# The model term correctly captures teh overall degrees of freedom to be calculated.
+dat %>% 
+  pairwise_t_test(Stalker ~ Therapy,
+                  paired = FALSE) 
 ```
 
 ### 9. Report the main effect of Type of Therapy in APA format. Is this effect significant and how would you interpret it?
