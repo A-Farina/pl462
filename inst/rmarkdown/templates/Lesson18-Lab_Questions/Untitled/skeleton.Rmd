@@ -1,7 +1,7 @@
 ---
 title: "Lesson18-Lab_Handout"
 author: "Your Name"
-date: `r Sys.Date()`
+date: "`r Sys.Date()`"
 output: 
   word_document
 ---
@@ -153,11 +153,13 @@ dat %>% group_by(Therapy, AmtTher) %>%
 
 >
 
-## If a significant two-way interaction exists, then the effect that one IV has on the DV is dependent on the level of a second IV. If you have a significant two-way interaction, you would then find the simple main effects (run one-way ANOVAs to determine if there is a simple main effect, if there is, a pairwise comparison would be used to determine which groups are different).
+## Interpreting the interaction effect
 
-## For a non-significant two-way interaction you can determine if there is a significant main effect from the ANOVA table and follow it up with a pairwise comparison between groups to determine where the differences exist. Spoiler Alert--we do not have a signficant two-way interaction but we do have significant main effects. As a result, we will use a pairwise t-test to determine where differences exist.
+If a significant two-way interaction exists, then the effect that one IV has on the DV is dependent on the level of a second IV. If you have a significant two-way interaction, you would then find the simple main effects (run one-way ANOVAs to determine if there is a simple main effect, if there is, a pairwise comparison would be used to determine which groups are different).
 
-## ANOVA tests determine whether there **is** a difference among groups. Multiple Comparisons Tables are used to understand **where** the differences exist. We will interpret the adjusted p-value (p.adj). This adjusted value uses a holm correction to account for multiple tests (adjusts the $\alpha).$
+For a non-significant two-way interaction you can determine if there is a significant main effect from the ANOVA table and follow it up with a pairwise comparison between groups to determine where the differences exist. Spoiler Alert--we do not have a signficant two-way interaction but we do have significant main effects. As a result, we will use a pairwise t-test to determine where differences exist.
+
+ANOVA tests determine whether there **is** a difference among groups. Multiple Comparisons Tables are used to understand **where** the differences exist. We will interpret the adjusted p-value (p.adj). This adjusted value uses a holm correction to account for multiple tests (adjusts the $\alpha).$
 
 ```{r compare-type-equal-var}
 # Two-way ANOVA- Multiple Comparisons- Therapy Type
