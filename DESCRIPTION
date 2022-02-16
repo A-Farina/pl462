@@ -12,7 +12,7 @@ Encoding: UTF-8
 Language: en
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.2
 URL: https://github.com/A-Farina/pl462
 BugReports: https://github.com/A-Farina/pl462/issues
 Depends: R (>= 2.10)
