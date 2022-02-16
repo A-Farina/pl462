@@ -1,0 +1,202 @@
+---
+title: "Lesson18-Stats Lab I Homework"
+author: "Your Name"
+date: "`r Sys.Date()`"
+output: 
+  word_document
+---
+
+```{r toolbox, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, 
+                      include = FALSE, 
+                      message = FALSE, 
+                      warning = FALSE)
+# Loading required packages
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(tidyverse, ggpubr, rstatix, pl462)
+```
+
+```{asis}
+# Instructions
+
+For this homework, you will replicate what was done in the stats lab with the 'Fugazi.sav' dataset and answer the questions below. The dataset is available from the `{pl462}` package.
+
+This homework is an individual assignment and worth 25 points. Once you are complete with the document, knit it to a word document and turn it in using the link in Teams.
+```
+
+```{r data_prep}
+# Loading the Data
+df <- pl462::fugazi # Loads the dataset called 'stalker' from the pl462 packages and assigns it the name "dat"
+?fugazi # Loads the help menu giving some descriptive information for the dataset
+glimpse(df) # Gives a quick view of the structure of the dataset.
+```
+
+```{asis}
+# Research Question 
+
+As many have observed, people’s taste in music has a tendency to change as they get older. Take Dr. Mozart’s parents, for instance. In the 70’s they listened to relatively cool music. Now, as they enter their early 60s they have developed an obsession with Manilow and Streisand. Worried about his own fate, Dr. Mozart decides to test whether it is possible to be old and like good music. For this purpose he recruits two groups of people, 45 in each group. One group contained “young people” (less than 40 years old) and the other contained more “mature people” (more than 40 years old). He further divided these participants into 3 groups of 15 each and assigned them to one of three possible music exposure conditions, Fugazi, ABBA, or Manilow. Each participant was assigned to only one music condition. After listening to their assigned music, each person rated it on a scale of -150 (meaning “I hated the music”) through 0 (meaning “I am completely indifferent”) to +150 (meaning “I absolutely LOVE this music”). Dr. Mozart called this variable “liking”. 
+```
+
+## Understanding these data
+
+### 1. What are the independent variables and how many levels do they have?
+
+>
+
+### 2. What is the dependent variable?
+
+>
+
+```{r summary_stats}
+# Summary Stats
+df %>% 
+  group_by(music, age) %>% 
+  get_summary_stats(liking, type = "mean_sd") # Prints Summary Statistics
+
+# Boxplot
+df %>% 
+  ggplot() + 
+  aes(x = music, y = liking, fill = age) + 
+  geom_boxplot() + 
+  labs(title = "Mean Liking Scores",
+       subtitle = "According to Age and Music Selection",
+       x = "Music",
+       y = "Liking Score",
+       fill = "Age")
+
+# Continuous Density Plot
+df %>% ggplot() + 
+  aes(x = liking, fill = age) + 
+  geom_density() + 
+  facet_grid(music ~ .) +
+  labs(title = "Liking Score Distributions",
+       subtitle = "According to Age and Music Selection", 
+       x = "Liking Score",
+       fill = "Age")
+```
+
+### 3. Comment on the Distribution of these data:
+
+>
+
+### 4. Comment on the Variability of these data:
+
+>
+
+```{r outliers}
+# Assumption testing- Outliers
+df %>% 
+  group_by(music, age) %>% 
+  rstatix::identify_outliers(liking) # Produces a table of outliers and extreme cases.
+```
+
+### 5. Comment on the potential outliers and extreme cases:
+
+>
+
+
+# Check Assumptions
+
+## Normality
+
+```{asis}
+### The normality assumption can be checked by using one of two approaches: 
+
+### a. Analyzing the ANOVA model residuals. This approach is generally easier to do and helpful if there are many groups. This is the approach we will take.
+
+### b. Checking Normality for each group separately. This might be helpful if you have only a few groups.
+```
+
+```{r normality-qq}
+# Assumption testing- Normality of Residuals- QQ Plot
+model <- lm(liking ~ music * age, data = df)
+ggqqplot(residuals(model)) # Graphically depicts the correlation of these data and a normal distribution.
+# Shapiro-Wilkes Test
+shapiro_test(residuals(model)) # Statistically determines normality of these data.
+```
+
+### 6. Comment on the normalty of these data (report relevent statistics in APA format):
+
+>
+
+## Homogeneity of Variance
+
+```{r}
+# Residuals vs Fitted Plot
+plot(model, 1) # Graphically compares the residuals to fitted values (mean of each group)
+# Assumption testing- Homogeneity of Variance
+df %>% levene_test(liking ~ music * age) # Statistically shows homogeneity of variance.
+```
+
+### 7. Comment on the homogeneity of Variance (report relevent statistics in APA format):
+
+>
+
+# ANOVA Questions:
+
+## Between-Subjects ANOVA
+
+```{r means1}
+# Two-way ANOVA- Visualize the Data
+df %>% group_by(music, age) %>% 
+  summarize(mean = mean(liking)) %>% 
+  ggplot() + 
+  aes(x = music, y = mean, group = age) + 
+  geom_line(aes(color = age)) + 
+  geom_point(aes(color = age)) + 
+  labs(title = "Estimated Marginal Means of Liking Score",
+       x = "Music type",
+       y = "Estimated Marginal Means")
+```
+
+```{r equal-variance}
+# Two-way ANOVA- Tests of Between-Subject with equal variance
+(fugazi_aov_equal <- df %>% 
+  anova_test(liking ~ music * age))
+```
+
+```{asis}
+## In the table above, F indicates that we are comparing F-distributions, the degrees of freedom DFn indicates the DF in the numerator, DFd indicates the DF in the denominator. P is the p-value and ges is the generalized effect size.
+```
+
+### 8. Report the interaction effect between music type and age in APA format. Is this effect significant and how would you interpret it?
+
+>
+
+```{asis}
+## Interpreting the interaction effect
+
+If a significant two-way interaction exists, then the effect that one IV has on the DV is dependent on the level of a second IV. If you have a significant two-way interaction, you would then find the simple main effects (run one-way ANOVAs to determine if there is a simple main effect, if there is, a pairwise comparison would be used to determine which groups are different).
+
+For a non-significant two-way interaction you can determine if there is a significant main effect from the ANOVA table and follow it up with a pairwise comparison between groups to determine where the differences exist. 
+
+Spoiler Alert--we do have a significant two-way interaction. As a result, we will first find the simple main effects by running one-way ANOVAs and conduct pairwise comparisons to determine which groups are different. 
+
+ANOVA tests determine whether there **is** a difference among groups. Multiple Comparisons Tables are used to understand **where** the differences exist. We will interpret the adjusted p-value (p.adj). This adjusted value uses a Bonferroni correction to account for multiple tests (adjusts the $\alpha).$
+```
+
+```{r one-way-ANOVAs}
+df %>% 
+  group_by(age) %>% 
+  anova_test(liking ~ music, error = model)
+# The error term brings the pooled variance in from the entire model.
+```
+
+```{asis}
+Now that we understand the one way ANOVA for each level of music, we can conduct pairwise comparisons to determine where the differences exist in each group.
+```
+
+```{r compare-type-equal-var}
+# One-way ANOVA- Multiple Comparisons- Therapy Type
+df %>% 
+  group_by(age) %>% 
+  emmeans_test(liking ~ music) 
+```
+
+### 9. Report the main effect of music type in APA format. Is this effect significant and how would you interpret it?
+
+>
+
+### 10. Report the main effect of age in APA format. Is this effect significant and how would you interpret it?
+
+>
