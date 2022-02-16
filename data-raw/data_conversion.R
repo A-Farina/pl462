@@ -1,7 +1,13 @@
 library(haven)
 stalker <- read_sav(here::here("data-raw", "Stalker.sav")) %>%
   mutate(Therapy = as_factor(Therapy, levels = "labels"),
-         AmtTher = as_factor(AmtTher, levels = "labels"))
+         AmtTher = as_factor(AmtTher, levels = "labels"),
+         Stalker = case_when(
+             Therapy == "None" & Stalker > 87 ~ Stalker-5,
+             Therapy == "None" & Stalker > 71 ~ Stalker-2,
+             Therapy == "None" & Stalker < 56 ~ Stalker+5,
+             TRUE ~ Stalker + 2
+           ))
 
 usethis::use_data(stalker, overwrite = TRUE)
 

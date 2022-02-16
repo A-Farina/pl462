@@ -43,7 +43,7 @@ Dr. Field is interested in seeing the most effective therapeutic intervention fo
 # Summary Stats
 dat %>% 
   group_by(Therapy, AmtTher) %>% 
-  get_summary_stats(Stalker, type = "mean_sd")
+  get_summary_stats(Stalker, type = "mean_sd") # Prints Summary Statistics
 
 # Boxplot
 dat %>% 
@@ -78,7 +78,7 @@ dat %>% ggplot() +
 # Assumption testing- Outliers
 dat %>% 
   group_by(Therapy, AmtTher) %>% 
-  rstatix::identify_outliers(Stalker)
+  rstatix::identify_outliers(Stalker) # Produces a table of outliers and extreme cases.
 ```
 
 ### 5. Comment on the potential outliers and extreme cases:
@@ -90,12 +90,18 @@ dat %>%
 
 ## Normality
 
+### The normality assumption can be checked by using one of two approaches: 
+
+### a. Analyzing the ANOVA model residuals. This approach is generally easier to do and helpful if there are many groups. This is the approach we will take.
+
+### b. Checking Normality for each group separately. This might be helpful if you have only a few groups.
+
 ```{r normality-qq}
 # Assumption testing- Normality of Residuals- QQ Plot
 model <- lm(Stalker ~ Therapy * AmtTher, data = dat)
-ggqqplot(residuals(model))
+ggqqplot(residuals(model)) # Graphically depicts the correlation of these data and a normal distribution.
 # Shapiro-Wilkes Test
-shapiro_test(residuals(model))
+shapiro_test(residuals(model)) # Statistically determines normality of these data.
 ```
 
 ### 6. Comment on the normalty of these data (report relevent statistics in APA format):
@@ -106,9 +112,9 @@ shapiro_test(residuals(model))
 
 ```{r}
 # Residuals vs Fitted Plot
-plot(model, 1)
+plot(model, 1) # Graphically compares the residuals to fitted values (mean of each group)
 # Assumption testing- Homogeneity of Variance
-dat %>% levene_test(Stalker ~ Therapy * AmtTher)
+dat %>% levene_test(Stalker ~ Therapy * AmtTher) # Statistically shows homogeneity of variance.
 ```
 
 ### 7. Comment on the homogeneity of Variance (report relevent statistics in APA format):
@@ -117,59 +123,9 @@ dat %>% levene_test(Stalker ~ Therapy * AmtTher)
 
 # ANOVA Questions:
 
-```{r equal-variance}
-# Two-way ANOVA- Tests of Between-Subject with equal variance
-(stalker_aov_equal <- dat %>% 
-  anova_test(Stalker ~ Therapy * AmtTher))
+## Between-Subjects ANOVA
 
-```
-
-### 8. Report the main effect of Type of Therapy in APA format. Is this effect significant and how would you interpret it?
-
-
-
-### 9. Report the main effect of Time in Therapy in APA format. Is this effect significant and how would you interpret it?
-
-
-
-### 10. Report the interaction effect between Therapy and AmtTher in APA format. Is this effect significant and how would you interpret it?
-
->
-
-
-
-
-
-```{r anova1}
-# Two-way ANOVA- Tests of Between-Subject Effects
-(stalker_aov <- dat %>% 
-  anova_test(Stalker ~ Therapy * AmtTher))
-```
-
-```{r compare-unequal-var}
-# Two-way ANOVA- Multiple Comparisons- Therapy Type
-dat %>% pairwise_t_test(Stalker ~ Therapy, 
-                        paired = TRUE,
-                        p.adjust.method = 'bonferroni') %>% 
-  select(-`.y.`, -n1, -n2) 
-```
-
-```{r compare-equal-var}
-# Two-way ANOVA- Multiple Comparisons- Therapy Type
-dat %>% t_test(Stalker ~ Therapy,
-               paired = TRUE,
-               var.equal = TRUE,
-               p.adjust.method = 'bonferroni') %>% 
-  select(-`.y.`, -n1, -n2) 
-```
-
-```{r compare-between}
-# Two-way ANOVA- Multiple Comparisons- Therapy Amount
-dat %>% pairwise_t_test(Stalker ~ AmtTher, 
-                        p.adjust.method = 'bonferroni') %>% 
-  select(-`.y.`, -n1, -n2) 
-```
-
+## Visualize
 ```{r means1}
 # Two-way ANOVA- Visualize the Data
 dat %>% group_by(Therapy, AmtTher) %>% 
@@ -184,16 +140,34 @@ dat %>% group_by(Therapy, AmtTher) %>%
        y = "Estimated Marginal Means")
 ```
 
-```{r}
-# Simple Main Effects
-model <- lm(Stalker ~ Therapy * AmtTher, data = dat)
-
-dat %>% group_by(AmtTher) %>% 
-  anova_test(Stalker ~ Therapy, error = model)
+## Compute
+```{r equal-variance}
+# Two-way ANOVA- Tests of Between-Subject with equal variance
+(stalker_aov_equal <- dat %>% 
+  anova_test(Stalker ~ Therapy * AmtTher))
 ```
 
+## In the table above, F indicates that we are comparing F-distributions, the degrees of freedom DFn indicates the DF in the numerator, DFd indicates teh DF in the denominator. P is the p-value and ges is the generalized effect size.
 
+### 8. Report the interaction effect between Therapy and AmtTher in APA format. Is this effect significant and how would you interpret it?
 
+>
 
+## If a significant two-way interaction exists, then the effect that one IV has on the DV is dependent on the level of a second IV. If you have a significant two-way interaction, you would then find the simple main effects (run one-way ANOVAs to determine if there is a simple main effect, if there is, a pairwise comparison would be used to determine which groups are different).
 
+## For a non-significant two-way interaction you can determine if there is a significant main effect from the ANOVA table and follow it up with a pairwise comparison between groups to determine where the differences exist. Spoiler Alert--we do not have a signficant two-way interaction but we do have significant main effects. As a result, we will use a pairwise t-test to determine where differences exist.
 
+## ANOVA tests determine whether there **is** a difference among groups. Multiple Comparisons Tables are used to understand **where** the differences exist. We will interpret the adjusted p-value (p.adj). This adjusted value uses a holm correction to account for multiple tests (adjusts the $\alpha).$
+
+```{r compare-type-equal-var}
+# Two-way ANOVA- Multiple Comparisons- Therapy Type
+dat %>% pairwise_t_test(Stalker ~ Therapy) 
+```
+
+### 9. Report the main effect of Type of Therapy in APA format. Is this effect significant and how would you interpret it?
+
+>
+
+### 10. Report the main effect of Time in Therapy in APA format. Is this effect significant and how would you interpret it?
+
+>
