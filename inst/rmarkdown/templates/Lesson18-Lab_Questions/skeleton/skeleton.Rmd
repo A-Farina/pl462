@@ -1,0 +1,183 @@
+---
+title: "Lesson18-Lab_Handout"
+author: "Your Name"
+date: "`r Sys.Date()`"
+output: 
+  word_document
+---
+
+```{r toolbox, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, 
+                      include = FALSE, 
+                      message = FALSE, 
+                      warning = FALSE)
+# Loading required packages
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(tidyverse, ggpubr, rstatix, pl462)
+```
+
+```{asis}
+For this lab, we will use a modified version of the "Stalker" dataset from Dr. Andy Fields. You can load this dataset from the `{pl462}` package.
+```
+
+```{r data_prep}
+# Loading the Data
+dat <- pl462::stalker # Loads the dataset called 'stalker' from the pl462 packages and assigns it the name "dat"
+?stalker # Loads the help menu giving some descriptive information for the dataset
+glimpse(dat) # Gives a quick view of the structure of the dataset.
+```
+
+```{asis}
+# Research Question 
+
+Dr. Field is interested in seeing the most effective therapeutic intervention for stalkers. In addition, in an effort to cut back on the number of weeks he spends treating stalkers, he is trying to discover the minimum amount of time patients need to be in treatment to show improvement. In order to test his hypotheses, he recruits 78 convicted stalkers to participate in either a 6 week or 12 week therapy program. His post intervention measure of success is the number of hours a week spent stalking.  
+```
+
+## Understanding these data
+
+### 1. What are the independent variables and how many levels do they have?
+
+>
+
+### 2. What is the dependent variable?
+
+>
+
+```{r summary_stats}
+# Summary Stats
+dat %>% 
+  group_by(Therapy, AmtTher) %>% 
+  get_summary_stats(Stalker, type = "mean_sd") # Prints Summary Statistics
+
+# Boxplot
+dat %>% 
+  ggplot() + 
+  aes(x = Therapy, y = Stalker, fill = AmtTher) + 
+  geom_boxplot() + 
+  labs(title = "Mean Stalker Scores",
+       subtitle = "According to Therapy Type and Duration",
+       x = "Therapy Type",
+       y = "Stalker Score",
+       fill = "Duration")
+
+# Continuous Density Plot
+dat %>% ggplot() + 
+  aes(x = Stalker, fill = AmtTher) + 
+  geom_density() + 
+  facet_grid(Therapy ~ .) +
+  labs(title = "Stalking Hour Distributions",
+       subtitle = "According to Therapy Amount and Type", 
+       fill = "Therapy Amount")
+```
+
+### 3. Comment on the Distribution of these data:
+
+>
+
+### 4. Comment on the Variability of these data:
+
+>
+
+```{r outliers}
+# Assumption testing- Outliers
+dat %>% 
+  group_by(Therapy, AmtTher) %>% 
+  rstatix::identify_outliers(Stalker) # Produces a table of outliers and extreme cases.
+```
+
+### 5. Comment on the potential outliers and extreme cases:
+
+>
+
+
+# Check Assumptions
+
+## Normality
+
+```{asis}
+### The normality assumption can be checked by using one of two approaches: 
+
+### a. Analyzing the ANOVA model residuals. This approach is generally easier to do and helpful if there are many groups. This is the approach we will take.
+
+### b. Checking Normality for each group separately. This might be helpful if you have only a few groups.
+```
+
+```{r normality-qq}
+# Assumption testing- Normality of Residuals- QQ Plot
+model <- lm(Stalker ~ Therapy * AmtTher, data = dat)
+ggqqplot(residuals(model)) # Graphically depicts the correlation of these data and a normal distribution.
+# Shapiro-Wilkes Test
+shapiro_test(residuals(model)) # Statistically determines normality of these data.
+```
+
+### 6. Comment on the normalty of these data (report relevent statistics in APA format):
+
+>
+
+## Homogeneity of Variance
+
+```{r}
+# Residuals vs Fitted Plot
+plot(model, 1) # Graphically compares the residuals to fitted values (mean of each group)
+# Assumption testing- Homogeneity of Variance
+dat %>% levene_test(Stalker ~ Therapy * AmtTher) # Statistically shows homogeneity of variance.
+```
+
+### 7. Comment on the homogeneity of Variance (report relevent statistics in APA format):
+
+>
+
+# ANOVA Questions:
+
+## Between-Subjects ANOVA
+
+```{r means1}
+# Two-way ANOVA- Visualize the Data
+dat %>% group_by(Therapy, AmtTher) %>% 
+  summarize(mean = mean(Stalker)) %>% 
+  ggplot() + 
+  aes(x = AmtTher, y = mean, group = Therapy) + 
+  geom_line(aes(color = Therapy)) + 
+  geom_point(aes(color = Therapy)) + 
+  labs(title = "Estimated Marginal Means of Time Spent Stalking",
+       subtitle = "(hours per week)",
+       x = "Amount of Therapy",
+       y = "Estimated Marginal Means")
+```
+
+```{r equal-variance}
+# Two-way ANOVA- Tests of Between-Subject with equal variance
+(stalker_aov_equal <- dat %>% 
+  anova_test(Stalker ~ Therapy * AmtTher))
+```
+
+```{asis}
+## In the table above, F indicates that we are comparing F-distributions, the degrees of freedom DFn indicates the DF in the numerator, DFd indicates teh DF in the denominator. P is the p-value and ges is the generalized effect size.
+```
+
+### 8. Report the interaction effect between Therapy and AmtTher in APA format. Is this effect significant and how would you interpret it?
+
+>
+
+```{asis}
+## Interpreting the interaction effect
+
+If a significant two-way interaction exists, then the effect that one IV has on the DV is dependent on the level of a second IV. If you have a significant two-way interaction, you would then find the simple main effects (run one-way ANOVAs to determine if there is a simple main effect, if there is, a pairwise comparison would be used to determine which groups are different).
+
+For a non-significant two-way interaction you can determine if there is a significant main effect from the ANOVA table and follow it up with a pairwise comparison between groups to determine where the differences exist. Spoiler Alert--we do not have a signficant two-way interaction but we do have significant main effects. As a result, we will use a pairwise t-test to determine where differences exist.
+
+ANOVA tests determine whether there **is** a difference among groups. Multiple Comparisons Tables are used to understand **where** the differences exist. We will interpret the adjusted p-value (p.adj). This adjusted value uses a holm correction to account for multiple tests (adjusts the $\alpha).$
+```
+
+```{r compare-type-equal-var}
+# Two-way ANOVA- Multiple Comparisons- Therapy Type
+dat %>% pairwise_t_test(Stalker ~ Therapy) 
+```
+
+### 9. Report the main effect of Type of Therapy in APA format. Is this effect significant and how would you interpret it?
+
+>
+
+### 10. Report the main effect of Time in Therapy in APA format. Is this effect significant and how would you interpret it?
+
+>
