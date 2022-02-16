@@ -1,5 +1,5 @@
 ---
-title: "Lesson19-Lab_Handout"
+title: "Lesson19-Homework"
 author: "Your Name"
 date: "`r Sys.Date()`"
 output: 
@@ -16,4 +16,4 @@ if (!require("pacman")) install.packages("pacman")
 pacman::p_load(tidyverse, ggpubr, rstatix, pl462)
 ```
 
-This is a place holder for the Lesson 19 Lab Questions
+This is a place holder for the Lesson 19 Homework
