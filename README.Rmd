@@ -147,3 +147,19 @@ This dataset contains `r nrow(diet)` observations and `r ncol(diet)` variables (
   *   weight10weeks: Weight of Participant after 10 weeks (kg)
   *   weight_loss: Weight change of Participant (kg)
   
+## grit dataset
+
+```{r grit, include = FALSE}
+load(here::here("data", "grit.rda"))
+```
+
+This dataset contains `r nrow(grit)` observations and `r ncol(grit)` variables (`r names(grit)`).
+
+**Categorical Variables**
+
+  *   sex: Biological Sex (Female, Male)
+  *   class: Timepoint of Measurement (Entry (Matriculation), Freshmen Spring, Yearling Spring)
+
+**Continuous Variables**
+
+  *   grit: Measure of Grit (Scale Score based on a 5-point Likert Scale)

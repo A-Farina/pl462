@@ -54,3 +54,9 @@ diet <- read_sav(here::here("data-raw", "Diet_SPSS.sav")) %>%
   rename(sex = gender)
 
 usethis::use_data(diet, overwrite = TRUE)
+
+#####################################################################
+
+grit <- rio::import(here::here("data-raw", "repeated_grit.csv"))
+
+usethis::use_data(grit, overwrite = TRUE)

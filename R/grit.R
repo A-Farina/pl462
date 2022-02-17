@@ -1,0 +1,15 @@
+#' Toy dataset of grit for 144 Students.
+#'
+#' A study measured grit at three different time points. This data set contains information on 144 people over three time points.  The data set can be used to demonstrate repeated measures ANOVAs and a mixed between-within ANOVA.
+#'
+#' @format A data frame with 144 rows and 5 variables:
+#' \describe{
+#'   \item{id}{Participant ID number}
+#'   \item{sex}{Biological Sex of Participant: F = Female, M = Male}
+#'   \item{athlete}{Whether the Participant is a Recruited Athlete: N = No, Y = Yes}
+#'   \item{class}{When the measure was taken: entry = at matriculation, freshmen = During the spring of freshmen year, sophomore = During the spring of sophomore year}
+#'   \item{grit}{Grit Scale Score: M = 3.728, SD = 0.606}
+#'   ...
+#' }
+#' @source Data created by Andrew Farina
+"grit"

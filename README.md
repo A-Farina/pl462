@@ -123,3 +123,18 @@ the [Statstutor community project.](www.statstutor.ac.uk).
 -   preweight: Weight of Participant before intervention (kg)
 -   weight10weeks: Weight of Participant after 10 weeks (kg)
 -   weight_loss: Weight change of Participant (kg)
+
+## grit dataset
+
+This dataset contains 432 observations and 5 variables (sex, athlete,
+id, class, grit).
+
+**Categorical Variables**
+
+-   sex: Biological Sex (Female, Male)
+-   class: Timepoint of Measurement (Entry (Matriculation), Freshmen
+    Spring, Yearling Spring)
+
+**Continuous Variables**
+
+-   grit: Measure of Grit (Scale Score based on a 5-point Likert Scale)
