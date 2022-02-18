@@ -1,0 +1,298 @@
+---
+title: "One-Way ANOVA: Advanced Topics in Stats I"
+date: "`r Sys.Date()`"
+output: 
+  word_document
+---
+
+```{r toolbox, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      include = TRUE, 
+                      message = FALSE, 
+                      warning = FALSE)
+# Loading required packages
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(tidyverse, ggpubr, rstatix, pl462, palmerpenguins)
+```
+
+Today we will discuss the Analysis of Variance (ANOVA) in its simplest form.
+
+What is a One-Way ANOVA?
+>
+
+What are the statistical assumptions of an ANOVA?
+>
+
+What is a One-Way Repeated Measures ANOVA?
+>
+
+# Analysis Framework
+
+    1. Load the Data
+    
+    2. Understand the data (Distribution, Variability, Outliers)
+      * Summary Statistics
+      * Data Visualization
+      * Outliers
+    
+    3. Check Assumptions
+      * Normality of Residuals or DV by group
+      * Homogeneity (Equality) of Variance or Sphericity
+      * Independent Samples
+      
+    4. Conduct the Statistical Test
+      * Run ANOVA
+      
+    5. Conduct Post-Hoc Analyses as needed
+      * Pairwise *t*-tests
+      * One-Way ANOVAs
+  
+# One-Way ANOVA (Between-Subjects)
+
+## 1. Load the Data
+
+```{r load-data-a}
+# Loading the Data
+penguins <- palmerpenguins::penguins # Loads the dataset called 'penguins' from the palmerpengins package and assigns it the name "penguins"
+?penguins # Loads the help menu giving some descriptive information for the dataset
+glimpse(penguins) # Gives a quick view of the structure of the dataset.
+```
+
+Research Question: 
+We are interested in determining if different species of penguins have different flipper lengths.  
+
+What is the DV?
+>
+
+What is/are the IV(s)? How many levels do they have?
+>
+
+## 2. Understand the data (Distribution, Variability, Outliers)
+  * Summary Statistics
+```{r descriptive-stats-a}
+penguins %>% 
+  group_by(species) %>% 
+  get_summary_stats(flipper_length_mm)
+```
+
+What are your observations given the descriptive statistics?
+>
+
+  * Data Visualization
+```{r data-vis-a}
+# Boxplot
+penguins %>% 
+  ggplot() + 
+  aes(x = species, y = flipper_length_mm) + 
+  geom_boxplot() +
+  geom_jitter(alpha = 0.2, width = .1)
+
+# Continuous Density Plot
+penguins %>% ggplot() + 
+  aes(x = flipper_length_mm, fill = species) + 
+  geom_density() + 
+  facet_grid(species ~ .)
+```
+
+What are your observations (distribution, variability) given these data visualizations?
+>
+
+  * Outliers
+```{r outliers-a}
+penguins %>% 
+  group_by(species) %>% 
+  rstatix::identify_outliers(flipper_length_mm) # Produces a table of outliers and extreme cases.
+```
+
+Are there any outliers in these data?
+> 
+
+## 3. Check Assumptions
+  * Normality of Residuals or DV by group
+
+
+*a. Analyzing the ANOVA model residuals. This approach is generally easier to do and helpful if there are many groups. This is the approach we will take.*
+
+```{r normality-a}
+# Assumption testing- Normality of Residuals- QQ Plot
+model <- lm(flipper_length_mm ~ species, data = penguins)
+ggqqplot(residuals(model)) # Graphically depicts the correlation of these data and a normal distribution.
+
+# Shapiro-Wilkes Test
+shapiro_test(residuals(model)) # Statistically determines normality of these data.
+```
+
+*b. Checking Normality for each group separately. This might be helpful if you have only a few groups.*
+
+```{r normality2-a}
+# Assumption testing- Normality DV by groups
+
+ggqqplot(penguins, "flipper_length_mm", facet.by = "species") # Graphically depicts the correlation of these data and a normal distribution.
+
+# Shapiro-Wilkes Test
+penguins %>%
+  group_by(species) %>%
+  shapiro_test(flipper_length_mm) # Statistically determines normality of these data. 
+```
+*Note: may be overly sensitive if data is more than 50. In that case, the qq plot is preferred.*
+
+Are these data normally distributed?
+>
+
+*If the data are not normally distributed, a Kruskal-Wallis test is a non-parametric alternative to the One-Way ANOVA.*
+
+  * Homogeneity (Equality) of Variance
+```{r variance-a}
+# Residuals vs Fitted Plot
+plot(model, 1) # Graphically compares the residuals to fitted values (mean of each group)
+
+# Assumption testing- Homogeneity of Variance
+penguins %>% levene_test(flipper_length_mm ~ species) # Statistically shows homogeneity of variance.
+```
+*If the data do not have homogeneity of variance, a welch one way ANOVA test can be performed (`welch_anova_test()`)*
+
+Do these data meet the assumption of homogeneity of variance?
+>
+
+  * Independent Samples
+
+Are these independent samples?
+>
+
+
+## 4. Conduct the Statistical Test
+  * Run ANOVA
+```{r ANOVA-a}
+# One-Way ANOVA- Tests of Between-Subject with equal variance
+penguins %>% 
+  anova_test(flipper_length_mm ~ species)
+```
+Interpret the results
+>
+
+## 5. Conduct Post-Hoc Analyses as needed
+  * Pairwise *t*-tests
+```{r pairwise-t-test-a}
+penguins %>% 
+  pairwise_t_test(flipper_length_mm ~ species)
+```
+Interpret the results
+>
+
+-------------------------------------------------------------------------
+# One-Way Repeated-Measures ANOVA (Within-Subjects)
+
+## 1. Load the Data
+
+```{r load-data-b}
+# Loading the Data
+grit <- pl462::grit # Loads the dataset called 'grit' from the pl462 package and assigns it the name "penguins"
+?grit # Loads the help menu giving some descriptive information for the dataset
+glimpse(grit) # Gives a quick view of the structure of the dataset.
+```
+
+Research Question: 
+We are interested in determining whether grit changes based on when the measure is taken (matriculation, freshmen year, sophmore year) 
+
+What is the DV?
+>
+
+What is/are the IV(s)? How many levels do they have?
+>
+
+## 2. Understand the data (Distribution, Variability, Outliers)
+  * Summary Statistics
+```{r descriptive-stats-b}
+grit %>% 
+  group_by(class) %>% 
+  get_summary_stats(grit)
+```
+
+What are your observations given the descriptive statistics?
+>
+
+  * Data Visualization
+```{r data-vis-b}
+# Boxplot
+grit %>% 
+  ggplot() + 
+  aes(x = class, y = grit) + 
+  geom_boxplot() +
+  geom_jitter(alpha = 0.2, width = .1)
+
+# Continuous Density Plot
+grit %>% ggplot() + 
+  aes(x = grit, fill = class) + 
+  geom_density() + 
+  facet_grid(class ~ .)
+```
+
+What are your observations (distribution, variability) given these data visualizations?
+>
+
+  * Outliers
+```{r outliers-b}
+grit %>% 
+  group_by(class) %>% 
+  rstatix::identify_outliers(grit) # Produces a table of outliers and extreme cases.
+```
+
+Are there any outliers in these data?
+> 
+
+## 3. Check Assumptions
+  * Normality of Residuals or DV by group
+
+
+*a. Analyzing the ANOVA model residuals. This approach is generally easier to do and helpful if there are many groups. This is the approach we will take.*
+
+```{r normality-b}
+# Assumption testing- Normality of Residuals- QQ Plot
+model <- lm(grit ~ class, data = grit)
+ggqqplot(residuals(model)) # Graphically depicts the correlation of these data and a normal distribution.
+
+# Shapiro-Wilkes Test
+shapiro_test(residuals(model)) # Statistically determines normality of these data.
+```
+
+*b. Checking Normality for each group separately. This might be helpful if you have only a few groups.*
+
+```{r normality2-b}
+# Assumption testing- Normality DV by groups
+
+ggqqplot(grit, "grit", facet.by = "class") # Graphically depicts the correlation of these data and a normal distribution.
+
+# Shapiro-Wilkes Test
+grit %>%
+  group_by(class) %>%
+  shapiro_test(grit) # Statistically determines normality of these data. 
+```
+*Note: may be overly sensitive if data is more than 50. In that case, the qq plot is preferred.*
+
+Are these data normally distributed?
+>
+
+*If the data are not normally distributed, a Kruskal-Wallis test is a non-parametric alternative to the One-Way ANOVA (`kruskal_test()`).*
+
+  * Sphericity
+*variance of the differences between groups should be equal. This can be checked using the Mauchly’s test of sphericity. This is automatically reported and adjusted with `anova_test()`*
+
+## 4. Conduct the Statistical Test
+  * Run ANOVA
+```{r ANOVA-b}
+# One-Way Repeated Measures ANOVA- Tests of Within-Subject.
+grit %>% 
+  anova_test(wid = id, dv = grit, within = class)
+```
+Interpret the results
+>
+
+## 5. Conduct Post-Hoc Analyses as needed
+  * Pairwise *t*-tests
+```{r pairwise-t-test-b}
+grit %>% 
+  pairwise_t_test(grit ~ class,
+                  paired = TRUE)
+```
+Interpret the results
+>
