@@ -1,5 +1,5 @@
 Package: pl462
-Title: Data package for PL462
+Title: Data package and Templates for PL462
 Version: 0.3.0
 Authors@R: 
     person(given = "Andrew",
