@@ -12,7 +12,8 @@ knitr::opts_chunk$set(echo = TRUE,
                       warning = FALSE)
 # Loading required packages
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load(tidyverse, ggpubr, rstatix, pl462, palmerpenguins)
+pacman::p_load(tidyverse, ggpubr, rstatix, palmerpenguins)
+pacman::p_load_gh("A-Farina/pl462")
 ```
 
 Today we will discuss the Analysis of Variance (ANOVA) in its simplest form.

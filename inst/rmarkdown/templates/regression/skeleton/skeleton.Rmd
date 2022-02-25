@@ -1,0 +1,181 @@
+---
+title: "Regression: Advanced Topics in Stats III"
+date: "`r Sys.Date()`"
+output: 
+  word_document
+---
+
+```{r toolbox, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      include = TRUE, 
+                      message = FALSE, 
+                      warning = FALSE)
+# Loading required packages
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(tidyverse, ggpubr, rstatix, lm.beta, skimr, patchwork)
+pacman::p_load_gh("A-Farina/pl462")
+```
+
+Today we will finally discuss Simple and Multiple Linear Regression.
+
+# Analysis Framework
+
+    1. Load the Data
+    
+    2. Understand the data (Distribution, Variability, Outliers)
+      * Summary Statistics
+      * Data Visualization
+      * Outliers
+    
+    3. Check Assumptions
+      * Normality of Residuals
+      * Homoskedasticity
+      * Independent Observations
+      * Linear Relationship
+      * Continuous variables
+
+    4. Conduct the Statistical Test
+      * Run Linear Regression `lm()`
+      
+    5. Conduct Post-Hoc Analyses as needed
+  
+# Multiple Regression
+
+## 1. Load the Data
+
+```{r load-data-a}
+# Loading the Data
+dat <- pl462::happyparent %>% 
+ select(sex, str_slf1, negmood1, health)# Loads the dataset called 'happyparent' from the pl462 package and assigns it the name "dat"
+?happyparent # Loads the help menu giving some descriptive information for the dataset
+glimpse(dat) # Gives a quick view of the structure of the dataset.
+```
+
+Research Question: 
+How are stress regarding self, self-rated physical health, and sex related to negative mood?
+
+What is our DV?
+>
+
+What are our IVs?
+>
+
+## 2. Understand the data (Distribution, Variability, Outliers)
+  * Summary Statistics
+```{r descriptive-stats-a}
+dat %>% 
+  skimr::skim()
+```
+
+What are your observations given the descriptive statistics?
+
+>
+
+  * Data Visualization
+```{r data-vis-a}
+p1 <- dat %>%
+  ggplot() +
+    aes(x = health) +
+    geom_histogram(bins = 5) +
+    labs(title = "Histogram of Self-Reported Health")
+p2 <- dat %>%
+  ggplot() +
+    aes(x = str_slf1) +
+    geom_histogram(bins = 9) +
+  labs(title = "Histogram of Self-Reported Stress",
+       x = "stress",
+       y = "")
+p3 <- dat %>%
+  ggplot() +
+  aes(x = sex) +
+  geom_histogram(stat = "count", bins = 2) +
+  labs(title = "Number of participants according to Sex")
+p4 <- dat %>%
+  ggplot() +
+    aes(x = negmood1) +
+    geom_histogram(bins = 20) +
+  labs(title = "Histogram of Self-Reported Negative Mood",
+       x = "negative mood",
+       caption = "Higher score = more positive mood")
+
+(p1 + p2) / (p3 + p4)
+```
+
+  * Correlations
+```{r}
+dat %>%
+  select(-sex) %>%
+  cor_mat() %>%
+  cor_mark_significant(cutpoints = c(0, .001, .01, .05, 1),
+                       symbols = c("***", "**", "*", ""))
+```
+
+What are your observations (distribution and correlations)?
+
+>
+
+  * Outliers
+```{r outliers-a}
+dat %>% 
+  rstatix::identify_outliers(negmood1) # Produces a table of outliers and extreme cases.
+```
+
+Are there any outliers in these data?
+
+> 
+
+## 3. Check Assumptions
+  * Normality of Residuals
+
+```{r normality-a}
+# Assumption testing- Normality of Residuals- QQ Plot
+model <- lm(negmood1 ~ sex + str_slf1 + health, 
+            data = dat)
+ggqqplot(residuals(model)) # Graphically depicts the correlation of these data and a normal distribution.
+
+# Shapiro-Wilkes Test
+shapiro_test(residuals(model)) # Statistically determines normality of these data.
+
+# With outliers removed
+model2 <- lm(negmood1 ~ sex + str_slf1 + health, 
+             data = dat %>% 
+               filter(!is_extreme(negmood1)))
+ggqqplot(residuals(model2))
+shapiro_test(residuals(model2))
+```
+
+Are these residuals normally distributed?
+
+>
+
+  * Homoskedasticity
+```{r variance-a}
+# Residuals vs Fitted Plot
+plot(model2, 1)# Graphically compares the residuals to fitted values 
+```
+*If the data has homoskedasticity, the points should be equally dispursed away from the line as you move from one side to the other. If the points resemble more of a sideways "V", you have heteroskedasticity and you would need to find a way to correct for that (Box-Cox transformation)
+
+Do these data meet the assumption of homoskedasticity?
+
+>
+
+
+## 4. Conduct the Statistical Test
+  * Run linear regression
+```{r lm-a}
+# We've already run the linear regression above. Now to see the results: 
+summary(model2)
+```
+Interpret the output?
+
+>
+
+What is the predicted mood score for a woman with 5 stressors and a self-rated health score of 3?
+
+> Ŷ = Intercept - b(stress-self) + b(health) - b(gender)
+
+  * Find standardized regression coefficients for reporting
+```{r}
+summary(lm.beta(model2), standardized = TRUE)
+```
+

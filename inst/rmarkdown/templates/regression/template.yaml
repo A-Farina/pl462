@@ -1,0 +1,4 @@
+name: regression
+description: >
+   This template supports the Advanced Topics Part III (Regression) class.
+create_dir: FALSE
