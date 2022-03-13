@@ -7,13 +7,180 @@ output:
 ---
 
 ```{r toolbox, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, 
-                      include = FALSE, 
+knitr::opts_chunk$set(echo = TRUE, 
+                      include = TRUE, 
                       message = FALSE, 
                       warning = FALSE)
 # Loading required packages
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load(tidyverse, ggpubr, rstatix, pl462)
+pacman::p_load(tidyverse, ggpubr, rstatix, lm.beta, skimr, patchwork)
+pacman::p_load_gh("A-Farina/pl462")
 ```
 
-This is a place holder for the Lesson 19 Lab Questions
+# 1. Load the Data
+
+```{r load-data-a}
+# Loading the Data
+dat <- pl462::happyparent %>% 
+  mutate(educ = relevel(educ, ref = "Graduated H.S.")) # Loads the dataset called 'happyparent' from the pl462 package and assigns it the name "dat". This also sets the reference group for education to be a HS Graduate. This will become important when we interpret our output.
+?happyparent # Loads the help menu giving some descriptive information for the dataset
+glimpse(dat) # Gives a quick view of the structure of the dataset.
+```
+
+## Research Question:
+COL Ryan is concerned that her children are shaving years off her life span and wants to know the factors that may be contributing to her health. To help her out you surveyed 302 adults and asked them about their self rated physical health (health), number of children (children), amount of stress related to children (str_chd), stress related to themselves (str_slf1), negative mood (negmood1) and educational background (educ).  Which factors predict a parent’s health and how strong is your regression model? 
+
+### What is the design of this study (research type)?  
+
+>
+
+### What variables should be included to answer your research question (label IV/DV or predictor/outcome)?  
+
+>
+
+### Write the hypothesis(es) for this study.  
+
+>
+
+# 2. Understand the data (Distribution, Variability, Outliers)
+  * Summary Statistics
+```{r descriptive-stats-a}
+dat %>% 
+  skimr::skim()
+```
+
+What are your observations given the descriptive statistics?
+
+>
+
+  * Data Visualization
+```{r data-vis-a}
+p1 <- dat %>%
+  ggplot() +
+    aes(x = health) +
+    geom_histogram(bins = 5) +
+    labs(title = "Histogram of Self-Reported Health")
+p2 <- dat %>%
+  ggplot() +
+    aes(x = str_slf1) +
+    geom_histogram(bins = 9) +
+  labs(title = "Histogram of Self-Reported Stress",
+       x = "stress",
+       y = "")
+p3 <- dat %>%
+  ggplot() +
+  aes(x = children) +
+  geom_histogram(stat = "count") +
+  labs(title = "Number of Children")
+p4 <- dat %>%
+  ggplot() +
+    aes(x = negmood1) +
+    geom_histogram(bins = 20) +
+  labs(title = "Histogram of Self-Reported Negative Mood",
+       x = "negative mood",
+       y = "",
+       caption = "Higher score = more positive mood")
+p5 <- dat %>%
+  ggplot() +
+  aes(x = str_chd) +
+  geom_histogram(stat = "count") +
+  labs(title = "Reported Stress due to Children")
+p6 <- dat %>%
+  ggplot() +
+  aes(x = sex) +
+  geom_histogram(stat = "count") +
+  labs(title = "Number of participants according to Sex",
+       y = "")
+p7 <- dat %>% 
+  ggplot() + 
+  aes(x = educ) + 
+  geom_histogram(stat = "count") + 
+  coord_flip() + 
+  labs(title = "Reported education level of participants")
+
+(p1 + p2) / (p3 + p4) / (p5 + p6) / p7
+```
+
+### What are your observations about the distribution of these data? 
+
+>
+
+  * Correlations
+```{r}
+dat %>%
+  mutate(sex = as.numeric(sex),
+         educ = as.numeric(educ)) %>%
+  cor_mat() %>%
+  cor_mark_significant(cutpoints = c(0, .001, .01, .05, 1),
+                       symbols = c("***", "**", "*", ""))
+```
+
+### Looking at the correlation matrix, what variables should we include in our analysis?  
+
+>
+
+### Look at the correlations, what, if any, potential issues do we see with our variables?  
+
+>
+
+  * Outliers
+```{r outliers-a}
+dat %>% 
+  rstatix::identify_outliers(health) # Produces a table of outliers and extreme cases.
+```
+
+Are there any outliers in these data?
+
+> 
+
+## 3. Check Assumptions
+  * Normality of Residuals
+
+```{r normality-a}
+# Assumption testing- Normality of Residuals- QQ Plot
+model <- lm(health ~ sex + educ + str_slf1, 
+            data = dat) # Remove the variables that you do not want in the model.
+
+ggqqplot(residuals(model)) # Graphically depicts the correlation of these data and a normal distribution.
+
+# Shapiro-Wilkes Test
+shapiro_test(residuals(model)) # Statistically determines normality of these data.
+
+# With outliers removed
+model2 <- lm(health ~ sex + educ + str_slf1 + negmood1 + children + str_chd, 
+            data = dat %>% 
+               filter(!is_outlier(negmood1)))
+ggqqplot(residuals(model2))
+shapiro_test(residuals(model2))
+```
+
+Are these residuals normally distributed?
+
+>
+
+  * Homoskedasticity
+```{r variance-a}
+# Residuals vs Fitted Plot
+plot(model2, 1)# Graphically compares the residuals to fitted values 
+```
+*If the data has homoskedasticity, the points should be equally dispersed away from the line as you move from one side to the other. If the points resemble more of a sideways "V", you have heteroskedasticity and you would need to find a way to correct for that (Box-Cox transformation)
+
+Do these data meet the assumption of homoskedasticity?
+
+>
+
+## 4. Conduct the Statistical Test
+  * Run linear regression
+```{r lm-a}
+# We've already run the linear regression above. Now to see the results: 
+summary(model)
+```
+
+  * Find standardized regression coefficients for reporting
+```{r}
+summary(lm.beta(model), standardized = TRUE)
+```
+
+### Report your results
+
+>

@@ -13,7 +13,102 @@ knitr::opts_chunk$set(echo = FALSE,
                       warning = FALSE)
 # Loading required packages
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load(tidyverse, ggpubr, rstatix, pl462)
+pacman::p_load(tidyverse, ggpubr, rstatix, lm.beta, skimr, patchwork)
+pacman::p_load_gh("A-Farina/pl462")
 ```
 
-This is a place holder for the Lesson 19 Homework
+# 1. Load the Data
+
+```{r load-data-a}
+# Loading the Data
+dat <- pl462::supermodel  # Loads the dataset called 'happyparent' from the pl462 package and assigns it the name "dat". This also sets the reference group for education to be a HS Graduate. This will become important when we interpret our output.
+?supermodel # Loads the help menu giving some descriptive information for the dataset
+glimpse(dat) # Gives a quick view of the structure of the dataset.
+```
+
+## Research Question:
+Researchers are interested in determining factors that might predict the salary per day of a typical supermodel. Some of the factors under consideration are age, years modeling and percent attractiveness rating. You have been asked to determine if these factors are in fact good predictors of salary and the strength of your regression model. Write up your results in APA format.
+
+### What is your DV?
+
+>
+
+### What are your IVs?
+
+>
+
+# 2. Understand the data (Distribution, Variability, Outliers)
+  * Summary Statistics
+```{r descriptive-stats-a}
+dat %>% 
+  skimr::skim()
+```
+
+  * Data Visualization
+```{r data-vis-a}
+p1 <- dat %>%
+  ggplot() +
+    aes(x = salary) +
+    geom_histogram() +
+    labs(title = "Salary per Day")
+p2 <- dat %>%
+  ggplot() +
+    aes(x = age) +
+    geom_histogram() +
+  labs(title = "Supermodel Age",
+       y = "")
+p3 <- dat %>%
+  ggplot() +
+  aes(x = years) +
+  geom_histogram() +
+  labs(title = "Number of Years as a Supermodel")
+p4 <- dat %>%
+  ggplot() +
+    aes(x = beauty) +
+    geom_histogram() +
+  labs(title = "Attractiveness Rating",
+       y = "")
+
+
+(p1 + p2) / (p3 + p4)
+```
+
+### Comment on your variables (i.e. descriptive and distribution)
+
+>
+
+  * Correlations
+```{r}
+dat %>%
+  cor_mat() %>%
+  cor_mark_significant(cutpoints = c(0, .001, .01, .05, 1),
+                       symbols = c("***", "**", "*", ""))
+```
+
+### What variables are correlated?
+
+>
+
+### What variables will you include in your regression model?
+
+>
+
+Note: We will assume Normality and Homogeneity of your model residuals.
+
+## 4. Conduct the Statistical Test
+  * Run linear regression
+```{r lm-a}
+model <- lm(salary ~ age + beauty, 
+            data = dat) # Remove the variables that you do not want in the model.
+
+summary(model)
+```
+
+  * Find standardized regression coefficients for reporting
+```{r}
+summary(lm.beta(model), standardized = TRUE)
+```
+
+### Write up your results APA style:
+
+>
