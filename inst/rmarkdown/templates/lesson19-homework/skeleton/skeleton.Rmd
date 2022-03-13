@@ -27,7 +27,9 @@ glimpse(dat) # Gives a quick view of the structure of the dataset.
 ```
 
 ## Research Question:
+```{asis}
 Researchers are interested in determining factors that might predict the salary per day of a typical supermodel. Some of the factors under consideration are age, years modeling and percent attractiveness rating. You have been asked to determine if these factors are in fact good predictors of salary and the strength of your regression model. Write up your results in APA format.
+```
 
 ### What is your DV?
 
@@ -38,13 +40,12 @@ Researchers are interested in determining factors that might predict the salary 
 >
 
 # 2. Understand the data (Distribution, Variability, Outliers)
-  * Summary Statistics
+
 ```{r descriptive-stats-a}
 dat %>% 
   skimr::skim()
 ```
 
-  * Data Visualization
 ```{r data-vis-a}
 p1 <- dat %>%
   ggplot() +
@@ -77,7 +78,6 @@ p4 <- dat %>%
 
 >
 
-  * Correlations
 ```{r}
 dat %>%
   cor_mat() %>%
@@ -93,19 +93,19 @@ dat %>%
 
 >
 
+```{asis}
 Note: We will assume Normality and Homogeneity of your model residuals.
+```
 
 ## 4. Conduct the Statistical Test
-  * Run linear regression
+
 ```{r lm-a}
-model <- lm(salary ~ age + beauty, 
+model <- lm(salary ~ age + years + beauty, 
             data = dat) # Remove the variables that you do not want in the model.
 
 summary(model)
-```
 
-  * Find standardized regression coefficients for reporting
-```{r}
+# Find standardized regression coefficients for reporting
 summary(lm.beta(model), standardized = TRUE)
 ```
 
