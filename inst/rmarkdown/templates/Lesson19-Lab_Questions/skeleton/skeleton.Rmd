@@ -145,13 +145,6 @@ ggqqplot(residuals(model)) # Graphically depicts the correlation of these data a
 
 # Shapiro-Wilkes Test
 shapiro_test(residuals(model)) # Statistically determines normality of these data.
-
-# With outliers removed
-model2 <- lm(health ~ sex + educ + str_slf1 + negmood1 + children + str_chd, 
-            data = dat %>% 
-               filter(!is_outlier(negmood1)))
-ggqqplot(residuals(model2))
-shapiro_test(residuals(model2))
 ```
 
 Are these residuals normally distributed?
@@ -161,7 +154,7 @@ Are these residuals normally distributed?
   * Homoskedasticity
 ```{r variance-a}
 # Residuals vs Fitted Plot
-plot(model2, 1)# Graphically compares the residuals to fitted values 
+plot(model, 1)# Graphically compares the residuals to fitted values 
 ```
 *If the data has homoskedasticity, the points should be equally dispersed away from the line as you move from one side to the other. If the points resemble more of a sideways "V", you have heteroskedasticity and you would need to find a way to correct for that (Box-Cox transformation)
 
