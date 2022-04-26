@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# pl462 <img src='man/figures/logo.jpeg' align="right" height="137.5" />
+# pl462 <img src='man/figures/logo.png' align="right" height="137.5" />
 
 <!-- badges: start -->
 
